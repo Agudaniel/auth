@@ -32,27 +32,12 @@
         />
         <label for="floatingPassword">Password</label>
       </div>
-      <div class="form-floating mb-3">
-        <input
-          type=""
-          class="form-control"
-          id="FnameInp"
-          placeholder="Password"
-        />
-        <label for="floatingPassword">First Name</label>
-      </div>
-      <div class="form-floating mb-3">
-        <input
-          type="password"
-          class="form-control"
-          id="LnameInp"
-          placeholder="Password"
-        />
-        <label for="floatingPassword">Last Name</label>
-      </div>
+      
 
       <button type="submit" id="submit" class="btn btn-primary">Login</button>
-      <!-- <button type="submit" class="btn btn-primary">Sign In</button> -->
+
+      <a href="signup.html">SignUp</a>
+
     </form>
 
     <script
@@ -62,7 +47,7 @@
     ></script>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-      import { getDatabase, set, ref} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+      import { getFirestore, doc, getDoc} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
       import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     
       const firebaseConfig = {
@@ -78,30 +63,57 @@
     
       // Initialize Firebase
       const app = initializeApp(firebaseConfig);
-      const db = getDatabase();
+      const db = getFirestore();
       const auth = getAuth(app);
-      const dbref = ref(db);
+      // const dbref = ref(db);
 
       let EmailInp = document.getElementById('emailInp');
       let PassInp = document.getElementById('passwordInp');
       let MainForm = document.getElementById('MainForm');
 
-      let SignInUser = evt => {
-      evt.preventDefault();
+    //   let SignInUser = evt => {
+    //   evt.preventDefault();
 
-      signInWithEmailAndPassword(auth, EmailInp.value, PassInp.value)
-        .then((userCredential) => {
+    //   signInWithEmailAndPassword(auth, EmailInp.value, PassInp.value)
+    //     .then((userCredential) => {
  
-          console.log(userCredential);
+    //       console.log(userCredential);
     
           
-        })
-        .catch((error) => {
-          alert(error.message);
-          console.error(error.message);
-          console.error(error.code);
-        });
-    };
+    //     })
+    //     .catch((error) => {
+    //       alert(error.message);
+    //       console.error(error.message);
+    //       console.error(error.code);
+    //     });
+    // };
+
+    let SignInUser = evt => {
+  evt.preventDefault();
+
+  signInWithEmailAndPassword(auth, EmailInp.value, PassInp.value)
+    .then(async (userCredential) => {
+
+      var ref = doc(db, "UserAuthList", userCredential.user.uid);
+      const docSnap = await getDoc(ref);
+
+      if (docSnap.exists()) {
+        sessionStorage.setItem("user-info", JSON.stringify({
+          firstname: docSnap.data().firstname,
+          lastname: docSnap.data().lastname,
+          balance: docSnap.data().balance
+        }));
+        sessionStorage.setItem("user-creds", JSON.stringify(userCredential.user));
+        window.location.href = "home.html";
+      }
+
+    })
+    .catch((error) => {
+      alert(error.message);
+      console.error(error.message);
+      console.error(error.code);
+    });
+};
 
       MainForm.addEventListener('submit', SignInUser);
 

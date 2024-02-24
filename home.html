@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Auth</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+
+    <div>
+      <button class="btn btn-outline-success" type="button" id="signoutbutton">Sign Out</button>
+      <h2 id="msg"></h2>
+      <h2 id="greet"></h2>
+      <h2 id="mainbalance"></h2>
+
+    </div>
+    
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import { getFirestore, doc, getDoc} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyAVYnmzJvPlFWOjXiJDFChXZ8zAzQp1Ufw",
+        authDomain: "oceandwell-01.firebaseapp.com",
+        databaseURL: "https://oceandwell-01-default-rtdb.firebaseio.com",
+        projectId: "oceandwell-01",
+        storageBucket: "oceandwell-01.appspot.com",
+        messagingSenderId: "288421578797",
+        appId: "1:288421578797:web:5c1a7abf0b7e133b5190a4",
+        measurementId: "G-LFHVNGR715"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore();
+      
+    </script>
+
+
+    <script>
+
+
+
+      let UserCreds = JSON.parse(sessionStorage.getItem("user-creds"));
+      let UserInfo = JSON.parse(sessionStorage.getItem("user-info"));
+      
+      let MsgHead = document.getElementById('msg');
+      let GreetHead = document.getElementById('greet');
+      let MainBalance = document.getElementById('mainbalance');
+      let SignoutBtn = document.getElementById('signoutbutton');
+    
+      let Signout = () => {
+        sessionStorage.removeItem("user-creds"); 
+        sessionStorage.removeItem("user-info");  
+        window.location.href = "index.html";
+      }
+    
+      let Checkcred = () => {
+        if (!sessionStorage.getItem("user-creds"))
+          window.location.href = "index.html";
+        else {
+          MsgHead.innerText = `user with email "${UserCreds.email}" logged in`;
+          GreetHead.innerText = `Welcome "${UserInfo.firstname + " " + UserInfo.lastname}!"`;
+          MainBalance.innerText = `Your current balance is "${UserInfo.balance}"`;
+        }
+      }
+    
+      window.addEventListener('load', Checkcred);
+      SignoutBtn.addEventListener('click', Signout);
+    </script>
+    
+  </body>
+</html>
